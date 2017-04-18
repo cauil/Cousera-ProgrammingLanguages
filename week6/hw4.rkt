@@ -7,7 +7,7 @@
 ; problem 1
 (define (sequence low high stride)
   (cond [(> low high) null]
-        [#t (cons low (sequence (+ low stride) high stride))])
+        [#t (cons low (sequence (+ low stride) high stride))]))
 
 ; problem 2
 (define (string-append-map xs suffix)
@@ -81,3 +81,18 @@
                         [#t (f (+ i 1))]))
                 #f))])
     (f 0)))
+
+; problem 10
+(define (cached-assoc xs n)
+  (letrec ([cache (make-vector n #f)]
+           [guard 0]
+           [f (lambda (v)
+                (let ([foo (vector-assoc v cache)])
+                  (if (equal? foo #f)
+                      (if (equal? (assoc v xs) #f)
+                          #f
+                          (begin (vector-set! cache guard (assoc v xs))
+                                 (set! guard (remainder (+ guard 1) n))
+                                 (assoc v xs)))
+                      foo)))])
+    (lambda (v) (f v)))) 

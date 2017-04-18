@@ -7,6 +7,7 @@
 ;; Uncomment the line below and change HOMEWORK_FILE to the name of your homework file.
 ;;(require "HOMEWORK_FILE")
 
+(require "hw4.rkt")
 (require rackunit)
 
 ;; Helper functions
