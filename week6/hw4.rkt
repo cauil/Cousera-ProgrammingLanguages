@@ -54,8 +54,8 @@
 ; problem 6
 (define (dan-then-dog)
   (letrec ([f (lambda (x)
-                   (cons x (lambda ()
-                             (f (if (string=? x "dan.jpg") "dog.jpg" x)))))])
+                   (cons x (let* ([foo (if (string=? x "dan.jpg") "dog.jpg" "dan.jpg")])
+                             (lambda () (f foo )))))])
     (f "dan.jpg")))
 
 ; problem 7
