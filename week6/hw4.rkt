@@ -96,3 +96,14 @@
                                  (assoc v xs)))
                       foo)))])
     (lambda (v) (f v)))) 
+
+;problem 11
+(define-syntax while-less
+  (syntax-rules (do)
+          [(while-less e1 do e2)
+           (letrec ([foo e1]
+                 [f (lambda ()
+                        (if (< e2 foo)
+                            (f)
+                            #t))])
+             (f))]))
