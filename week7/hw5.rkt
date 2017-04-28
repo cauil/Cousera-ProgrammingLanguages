@@ -23,6 +23,15 @@
 ;; Problem 1
 
 ;; CHANGE (put your solutions here)
+(define (racketlist->mupllist xs)
+  (if (null? xs)
+      (aunit)
+      (apair (car xs) (racketlist->mupllist (cdr xs)))))
+
+(define (mupllist->racketlist ms)
+  (if (isaunit ms)
+      null
+      (cons fst(ms) (mupllist->racketlist ms))))
 
 ;; Problem 2
 
