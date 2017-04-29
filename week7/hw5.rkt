@@ -29,9 +29,9 @@
       (apair (car xs) (racketlist->mupllist (cdr xs)))))
 
 (define (mupllist->racketlist ms)
-  (if (isaunit ms)
+  (if (aunit? ms)
       null
-      (cons fst(ms) (mupllist->racketlist ms))))
+      (cons (apair-e1 ms) (mupllist->racketlist (apair-e2 ms)))))
 
 ;; Problem 2
 
@@ -58,6 +58,51 @@
                        (int-num v2)))
                (error "MUPL addition applied to non-number")))]
         ;; CHANGE add more cases here
+        [(int? e) e]
+        [(ifgreater? e)
+         (let ([v1 (eval-under-env (ifgreater-e1 e) env)]
+               [v2 (eval-under-env (ifgreater-e2 e) env)])
+           (if (and (int? v1) (int? v2))
+               (if (> (int-num v1)  (int-num v2))
+                   (eval-under-env (ifgreater-e3 e) env)
+                   (eval-under-env (ifgreater-e4 e) env))
+               (error "MUPL ifgreater e1 e2 applied to non-number")))]
+        [(fun? e) (closure env e)]
+        [(call? e)
+         (let ([v1 (eval-under-env (call-funexp e) env)]
+               [v2 (eval-under-env (call-actual e) env)])
+           (if (closure? v1)
+               (let* ([foofun (closure-fun v1)]
+                      [foopair (cons (fun-formal foofun) v2)]
+                      [funname (fun-nameopt foofun)]
+                      [newenv
+                       (if (equal? funname  #f)
+                          (cons foopair env)
+                          (cons (cons funname v1) (cons foopair env)))])
+                 (eval-under-env (fun-body foofun) newenv))
+               (error "MUPL call-funexp applied to non-closure")))]
+        [(mlet? e)
+         (let* ([v (eval-under-env (mlet-e e) env)]
+               [newenv (cons (cons (mlet-var e) v) env)])
+           (eval-under-env (mlet-body e) newenv))]
+        [(apair? e) (apair (eval-under-env (apair-e1 e) env) (eval-under-env (apair-e2 e) env))]
+        [(fst? e)
+         (let ([v (eval-under-env (fst-e e) env)])
+          (if (apair? v)
+             (apair-e1 v)
+             (error "MUPL fst applied to non-apair")))]
+        [(snd? e)
+         (let ([v (eval-under-env (snd-e e) env)])
+           (if (apair? v)
+               (apair-e2 v)
+               (error "MUPL snd applied to non-apair")))]
+        [(aunit? e) (aunit)]
+        [(isaunit? e)
+         (let ([v (eval-under-env (isaunit-e e) env)])
+           (if (equal? v (aunit))
+               (int 1)
+               (int 0)))]
+        [(closure? e) e]
         [#t (error (format "bad MUPL expression: ~v" e))]))
 
 ;; Do NOT change

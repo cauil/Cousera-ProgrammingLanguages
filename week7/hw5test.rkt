@@ -8,6 +8,7 @@
 ;;(require "hw5")
 
 (require rackunit)
+(require "hw5.rkt")
 
 (define tests
   (test-suite
