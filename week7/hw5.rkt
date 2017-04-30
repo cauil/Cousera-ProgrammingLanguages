@@ -111,11 +111,20 @@
         
 ;; Problem 3
 
-(define (ifaunit e1 e2 e3) "CHANGE")
+(define (ifaunit e1 e2 e3) (if (isaunit? e1) e2 e3))
 
-(define (mlet* lstlst e2) "CHANGE")
+(define (mlet* lstlst e2)
+  (if (null? lstlst)
+      e2
+      (mlet (car (car lstlst))
+            (cdr (car lstlst))
+            (mlet* (cdr lstlst) e2))))
 
-(define (ifeq e1 e2 e3 e4) "CHANGE")
+(define (ifeq e1 e2 e3 e4)
+  (if (and (isaunit? (ifgreater e1 e2 (int 1) (aunit)))
+           (isaunit? (ifgreater e2 e1 (int 1) (aunit))))
+      e3
+      e4))
 
 ;; Problem 4
 
